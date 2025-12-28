@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weatherbit Погода</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="https://www.weatherbit.io/static/img/icons/favicon-32x32.png">
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <div class="logo">
+                <i class="fas fa-cloud-sun-rain"></i>
+                <h1>Weatherbit <span>Погода</span></h1>
+            </div>
+            <p class="subtitle">Точный прогноз в реальном времени</p>
+        </div>
+
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" id="cityInput" placeholder="Введите город или индекс...">
+                <button id="searchBtn" class="btn-primary">
+                    <i class="fas fa-search"></i>
+                    <span>Поиск</span>
+                </button>
+                <button id="locationBtn" class="btn-secondary" title="Моё местоположение">
+                    <i class="fas fa-location-arrow"></i>
+                </button>
+            </div>
+            
+            <div class="quick-cities">
+                <button class="quick-city" data-city="Moscow">Москва</button>
+                <button class="quick-city" data-city="London">Лондон</button>
+                <button class="quick-city" data-city="New York">Нью-Йорк</button>
+                <button class="quick-city" data-city="Tokyo">Токио</button>
+                <button class="quick-city" data-city="Dubai">Дубай</button>
+            </div>
+        </div>
+
+        <!-- Сообщения -->
+        <div class="message error-message" id="errorMessage">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span id="errorText"></span>
+        </div>
+        
+        <div class="message info-message" id="infoMessage">
+            <i class="fas fa-info-circle"></i>
+            <span>API ключ активирован. Осталось запросов: <span id="apiCalls">-</span></span>
+        </div>
+
+        <!-- Загрузка -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Получаем данные о погоде...</p>
+        </div>
+
+        <!-- Основная карточка погоды -->
+        <div class="weather-card" id="weatherCard">
+            <div class="weather-header">
+                <div>
+                    <h2 id="cityName"><i class="fas fa-map-marker-alt"></i> Город</h2>
+                    <p class="datetime" id="currentDateTime"></p>
+                </div>
+                <div class="country-badge" id="countryBadge">
+                    <i class="fas fa-globe"></i> <span id="countryCode">--</span>
+                </div>
+            </div>
+
+            <div class="weather-main">
+                <div class="temperature-section">
+                    <div class="current-temp">
+                        <div class="temp-value" id="temperature">0</div>
+                        <div class="temp-unit">°C</div>
+                    </div>
+                    <div class="weather-icon-large" id="weatherIcon">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                </div>
+                
+                <div class="weather-details">
+                    <div class="detail-item">
+                        <i class="fas fa-temperature-high"></i>
+                        <div>
+                            <div class="detail-label">Ощущается</div>
+                            <div class="detail-value" id="feelsLike">0°C</div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-tint"></i>
+                        <div>
+                            <div class="detail-label">Влажность</div>
+                            <div class="detail-value" id="humidity">0%</div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-wind"></i>
+                        <div>
+                            <div class="detail-label">Ветер</div>
+                            <div class="detail-value" id="windSpeed">0 м/с</div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-compress-alt"></i>
+                        <div>
+                            <div class="detail-label">Давление</div>
+                            <div class="detail-value" id="pressure">0 hPa</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="weather-description-card">
+                <div class="desc-icon">
+                    <i class="fas fa-cloud" id="descIcon"></i>
+                </div>
+                <div class="desc-text">
+                    <h3 id="weatherDescription">Ясно</h3>
+                    <p id="weatherDetails">Обновлено только что</p>
+                </div>
+            </div>
+
+            <div class="forecast-mini">
+                <div class="forecast-item">
+                    <div class="forecast-label">Мин</div>
+                    <div class="forecast-value" id="tempMin">0°C</div>
+                </div>
+                <div class="forecast-item">
+                    <div class="forecast-label">Макс</div>
+                    <div class="forecast-value" id="tempMax">0°C</div>
+                </div>
+                <div class="forecast-item">
+                    <div class="forecast-label">Восход</div>
+                    <div class="forecast-value" id="sunrise">--:--</div>
+                </div>
+                <div class="forecast-item">
+                    <div class="forecast-label">Закат</div>
+                    <div class="forecast-value" id="sunset">--:--</div>
+                </div>
+                <div class="forecast-item">
+                    <div class="forecast-label">Видимость</div>
+                    <div class="forecast-value" id="visibility">0 км</div>
+                </div>
+                <div class="forecast-item">
+                    <div class="forecast-label">UV индекс</div>
+                    <div class="forecast-value" id="uvIndex">0</div>
+                </div>
+            </div>
+
+            <div class="air-quality" id="airQualitySection">
+                <div class="aqi-header">
+                    <i class="fas fa-wind"></i>
+                    <h3>Качество воздуха</h3>
+                </div>
+                <div class="aqi-value" id="aqiValue">--</div>
+                <div class="aqi-level" id="aqiLevel">Данные загружаются</div>
+            </div>
+        </div>
+
+        <div class="api-info">
+            <div class="api-stats">
+                <div class="stat-item">
+                    <i class="fas fa-key"></i>
+                    <div>
+                        <div class="stat-label">API Статус</div>
+                        <div class="stat-value" id="apiStatus">Активен</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-database"></i>
+                    <div>
+                        <div class="stat-label">Источник</div>
+                        <div class="stat-value">Weatherbit.io</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="credits">
+                <p>Погодные данные предоставлены <a href="https://www.weatherbit.io" target="_blank">Weatherbit.io</a></p>
+                <p>Ваш ключ: <code id="apiKeyPreview">17209...fdc8c</code></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
