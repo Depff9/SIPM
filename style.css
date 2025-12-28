@@ -1,15 +1,5 @@
-:root {
-    --primary: #3498db;
-    --primary-dark: #2980b9;
-    --secondary: #2ecc71;
-    --danger: #e74c3c;
-    --warning: #f39c12;
-    --dark: #2c3e50;
-    --light: #ecf0f1;
-    --gray: #7f8c8d;
-    --gradient-start: #3498db;
-    --gradient-end: #2c3e50;
-}
+/* Weatherbit Weather App - Full CSS with Light/Dark Themes */
+/* Reset and Base Styles */
 
 * {
     margin: 0;
@@ -18,25 +8,139 @@
     font-family: 'Segoe UI', 'Roboto', sans-serif;
 }
 
+/* CSS Variables for Light Theme (Default) */
+:root {
+    /* Primary Colors */
+    --primary-color: #3498db;
+    --primary-dark-color: #2980b9;
+    --secondary-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    
+    /* Neutral Colors */
+    --dark-color: #2c3e50;
+    --light-color: #ecf0f1;
+    --gray-color: #7f8c8d;
+    
+    /* Background Gradients */
+    --gradient-start: #3498db;
+    --gradient-end: #2c3e50;
+    
+    /* Background Colors */
+    --background-primary: #ffffff;
+    --background-secondary: #f8f9fa;
+    --background-card: rgba(255, 255, 255, 0.95);
+    --background-input: #ffffff;
+    
+    /* Text Colors */
+    --text-primary-color: #2c3e50;
+    --text-secondary-color: #7f8c8d;
+    
+    /* Border and Shadow Colors */
+    --border-color: #e0e0e0;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --shadow-hover-color: rgba(0, 0, 0, 0.15);
+    
+    /* Component Colors */
+    --button-primary-background: linear-gradient(135deg, var(--primary-color), var(--primary-dark-color));
+    --button-primary-text: #ffffff;
+    --button-secondary-background: var(--background-secondary);
+    --button-secondary-text: var(--text-primary-color);
+    
+    /* Card and Detail Colors */
+    --detail-background: var(--background-input);
+    --detail-label-color: var(--text-secondary-color);
+    --detail-value-color: var(--text-primary-color);
+    
+    /* Forecast Colors */
+    --forecast-background: var(--background-input);
+    --forecast-label-color: var(--text-secondary-color);
+    --forecast-value-color: var(--text-primary-color);
+    
+    /* Weather Description */
+    --weather-description-gradient: linear-gradient(135deg, 
+        rgba(52, 152, 219, 0.1), 
+        rgba(46, 204, 113, 0.1));
+}
+
+/* Dark Theme Variables */
+[data-theme="dark"] {
+    /* Primary Colors (unchanged) */
+    --primary-color: #3498db;
+    --primary-dark-color: #2980b9;
+    --secondary-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    
+    /* Neutral Colors (inverted) */
+    --dark-color: #ecf0f1;
+    --light-color: #2c3e50;
+    --gray-color: #95a5a6;
+    
+    /* Background Gradients */
+    --gradient-start: #1a1a2e;
+    --gradient-end: #16213e;
+    
+    /* Background Colors */
+    --background-primary: #121212;
+    --background-secondary: #1e1e1e;
+    --background-card: rgba(30, 30, 30, 0.95);
+    --background-input: #2d2d2d;
+    
+    /* Text Colors */
+    --text-primary-color: #ecf0f1;
+    --text-secondary-color: #bdc3c7;
+    
+    /* Border and Shadow Colors */
+    --border-color: #404040;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --shadow-hover-color: rgba(0, 0, 0, 0.4);
+    
+    /* Component Colors */
+    --button-primary-background: linear-gradient(135deg, var(--primary-color), var(--primary-dark-color));
+    --button-primary-text: #ffffff;
+    --button-secondary-background: var(--background-secondary);
+    --button-secondary-text: var(--text-primary-color);
+    
+    /* Card and Detail Colors */
+    --detail-background: var(--background-input);
+    --detail-label-color: var(--text-secondary-color);
+    --detail-value-color: var(--text-primary-color);
+    
+    /* Forecast Colors */
+    --forecast-background: var(--background-input);
+    --forecast-label-color: var(--text-secondary-color);
+    --forecast-value-color: var(--text-primary-color);
+    
+    /* Weather Description */
+    --weather-description-gradient: linear-gradient(135deg, 
+        rgba(52, 152, 219, 0.1), 
+        rgba(46, 204, 113, 0.1));
+}
+
+/* Body Styling */
 body {
     background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-    color: var(--dark);
+    color: var(--text-primary-color);
     min-height: 100vh;
     padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: background 0.5s ease, color 0.5s ease;
 }
 
+/* Container */
 .container {
     width: 100%;
     max-width: 800px;
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--background-card);
     border-radius: 24px;
     padding: 30px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 20px 40px var(--shadow-color);
     position: relative;
     overflow: hidden;
+    transition: background 0.5s ease, box-shadow 0.5s ease;
 }
 
 .container::before {
@@ -46,10 +150,45 @@ body {
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
 }
 
-/* Header */
+/* Theme Switcher */
+.theme-switcher {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+.theme-btn {
+    background: var(--background-secondary);
+    color: var(--text-primary-color);
+    border: 2px solid var(--border-color);
+    border-radius: 50px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.theme-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px var(--shadow-hover-color);
+}
+
+.theme-btn i {
+    font-size: 1.2rem;
+}
+
+/* Header Section */
 .header-section {
     text-align: center;
     margin-bottom: 30px;
@@ -65,8 +204,8 @@ body {
 
 .logo i {
     font-size: 3rem;
-    color: var(--primary);
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -74,18 +213,18 @@ body {
 .logo h1 {
     font-size: 2.5rem;
     font-weight: 800;
-    background: linear-gradient(135deg, var(--dark), var(--primary));
+    background: linear-gradient(135deg, var(--dark-color), var(--primary-color));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .logo span {
-    color: var(--primary);
-    -webkit-text-fill-color: var(--primary);
+    color: var(--primary-color);
+    -webkit-text-fill-color: var(--primary-color);
 }
 
 .subtitle {
-    color: var(--gray);
+    color: var(--text-secondary-color);
     font-size: 1.1rem;
     font-weight: 300;
 }
@@ -104,16 +243,17 @@ body {
 #cityInput {
     flex: 1;
     padding: 16px 24px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--border-color);
     border-radius: 16px;
     font-size: 1.1rem;
     transition: all 0.3s;
-    background: white;
+    background: var(--background-input);
+    color: var(--text-primary-color);
 }
 
 #cityInput:focus {
     outline: none;
-    border-color: var(--primary);
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
 }
 
@@ -130,8 +270,8 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
+    background: var(--button-primary-background);
+    color: var(--button-primary-text);
 }
 
 .btn-primary:hover {
@@ -140,9 +280,10 @@ body {
 }
 
 .btn-secondary {
-    background: var(--light);
-    color: var(--dark);
+    background: var(--button-secondary-background);
+    color: var(--button-secondary-text);
     padding: 16px;
+    border: 2px solid var(--border-color);
 }
 
 .quick-cities {
@@ -154,19 +295,19 @@ body {
 
 .quick-city {
     padding: 10px 20px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border-color);
     border-radius: 50px;
-    background: white;
-    color: var(--dark);
+    background: var(--background-input);
+    color: var(--text-primary-color);
     cursor: pointer;
     transition: all 0.3s;
     font-size: 0.9rem;
 }
 
 .quick-city:hover {
-    background: var(--primary);
+    background: var(--primary-color);
     color: white;
-    border-color: var(--primary);
+    border-color: var(--primary-color);
 }
 
 /* Messages */
@@ -180,21 +321,16 @@ body {
     animation: slideIn 0.5s ease;
 }
 
-@keyframes slideIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
 .error-message {
     background: rgba(231, 76, 60, 0.1);
-    border-left: 4px solid var(--danger);
-    color: var(--danger);
+    border-left: 4px solid var(--danger-color);
+    color: var(--danger-color);
 }
 
 .info-message {
     background: rgba(52, 152, 219, 0.1);
-    border-left: 4px solid var(--primary);
-    color: var(--primary);
+    border-left: 4px solid var(--primary-color);
+    color: var(--primary-color);
 }
 
 /* Loading */
@@ -211,16 +347,11 @@ body {
 .spinner {
     width: 60px;
     height: 60px;
-    border: 4px solid var(--light);
-    border-top: 4px solid var(--primary);
+    border: 4px solid var(--light-color);
+    border-top: 4px solid var(--primary-color);
     border-radius: 50%;
     margin: 0 auto 20px;
     animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
 }
 
 /* Weather Card */
@@ -233,46 +364,43 @@ body {
     animation: fadeIn 0.8s ease;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
+/* Weather Header */
 .weather-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
     padding-bottom: 20px;
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 2px solid var(--border-color);
 }
 
 .weather-header h2 {
     font-size: 2rem;
-    color: var(--dark);
+    color: var(--text-primary-color);
 }
 
 .weather-header h2 i {
-    color: var(--primary);
+    color: var(--primary-color);
     margin-right: 10px;
 }
 
 .datetime {
-    color: var(--gray);
+    color: var(--text-secondary-color);
     font-size: 1rem;
     margin-top: 5px;
 }
 
 .country-badge {
-    background: var(--light);
+    background: var(--background-secondary);
     padding: 8px 16px;
     border-radius: 50px;
     display: flex;
     align-items: center;
     gap: 8px;
+    color: var(--text-primary-color);
 }
 
-/* Temperature Section */
+/* Weather Main Section */
 .weather-main {
     display: flex;
     justify-content: space-between;
@@ -296,22 +424,22 @@ body {
 .temp-value {
     font-size: 5rem;
     font-weight: 800;
-    color: var(--dark);
+    color: var(--text-primary-color);
     line-height: 1;
 }
 
 .temp-unit {
     font-size: 2.5rem;
-    color: var(--gray);
+    color: var(--text-secondary-color);
     margin-top: 10px;
 }
 
 .weather-icon-large {
     font-size: 4.5rem;
-    color: var(--primary);
+    color: var(--primary-color);
 }
 
-/* Weather Details */
+/* Weather Details Grid */
 .weather-details {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -324,9 +452,9 @@ body {
     align-items: center;
     gap: 15px;
     padding: 20px;
-    background: white;
+    background: var(--detail-background);
     border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px var(--shadow-color);
     transition: transform 0.3s;
 }
 
@@ -336,44 +464,48 @@ body {
 
 .detail-item i {
     font-size: 2rem;
-    color: var(--primary);
+    color: var(--primary-color);
 }
 
 .detail-label {
     font-size: 0.9rem;
-    color: var(--gray);
+    color: var(--detail-label-color);
     margin-bottom: 5px;
 }
 
 .detail-value {
     font-size: 1.8rem;
     font-weight: 700;
-    color: var(--dark);
+    color: var(--detail-value-color);
 }
 
-/* Weather Description */
+/* Weather Description Card */
 .weather-description-card {
     display: flex;
     align-items: center;
     gap: 20px;
     padding: 25px;
-    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(46, 204, 113, 0.1));
+    background: var(--weather-description-gradient);
     border-radius: 16px;
     margin-bottom: 25px;
 }
 
 .desc-icon {
     font-size: 3rem;
-    color: var(--primary);
+    color: var(--primary-color);
 }
 
 .desc-text h3 {
     font-size: 1.8rem;
-    color: var(--dark);
+    color: var(--text-primary-color);
     margin-bottom: 5px;
 }
 
-/* Forecast Mini */
+.desc-text p {
+    color: var(--text-secondary-color);
+}
+
+/* Forecast Mini Grid */
 .forecast-mini {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -381,39 +513,33 @@ body {
     margin-bottom: 25px;
 }
 
-@media (min-width: 768px) {
-    .forecast-mini {
-        grid-template-columns: repeat(6, 1fr);
-    }
-}
-
 .forecast-item {
     text-align: center;
     padding: 15px;
-    background: white;
+    background: var(--forecast-background);
     border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 8px var(--shadow-color);
 }
 
 .forecast-label {
     font-size: 0.85rem;
-    color: var(--gray);
+    color: var(--forecast-label-color);
     margin-bottom: 8px;
 }
 
 .forecast-value {
     font-size: 1.3rem;
     font-weight: 700;
-    color: var(--dark);
+    color: var(--forecast-value-color);
 }
 
-/* Air Quality */
+/* Air Quality Section */
 .air-quality {
     padding: 20px;
-    background: white;
+    background: var(--background-input);
     border-radius: 16px;
     margin-bottom: 25px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px var(--shadow-color);
 }
 
 .aqi-header {
@@ -424,12 +550,12 @@ body {
 }
 
 .aqi-header i {
-    color: var(--secondary);
+    color: var(--secondary-color);
     font-size: 1.5rem;
 }
 
 .aqi-header h3 {
-    color: var(--dark);
+    color: var(--text-primary-color);
 }
 
 .aqi-value {
@@ -442,14 +568,14 @@ body {
 .aqi-level {
     text-align: center;
     font-size: 1.1rem;
-    color: var(--gray);
+    color: var(--text-secondary-color);
 }
 
-/* API Info */
+/* API Info Section */
 .api-info {
     margin-top: 30px;
     padding-top: 20px;
-    border-top: 2px solid #f0f0f0;
+    border-top: 2px solid var(--border-color);
 }
 
 .api-stats {
@@ -464,34 +590,35 @@ body {
     align-items: center;
     gap: 15px;
     padding: 15px;
-    background: var(--light);
+    background: var(--background-secondary);
     border-radius: 12px;
 }
 
 .stat-item i {
     font-size: 1.8rem;
-    color: var(--primary);
+    color: var(--primary-color);
 }
 
 .stat-label {
     font-size: 0.9rem;
-    color: var(--gray);
+    color: var(--text-secondary-color);
 }
 
 .stat-value {
     font-size: 1.2rem;
     font-weight: 600;
-    color: var(--dark);
+    color: var(--text-primary-color);
 }
 
+/* Credits */
 .credits {
     text-align: center;
-    color: var(--gray);
+    color: var(--text-secondary-color);
     font-size: 0.9rem;
 }
 
 .credits a {
-    color: var(--primary);
+    color: var(--primary-color);
     text-decoration: none;
     font-weight: 600;
 }
@@ -501,14 +628,95 @@ body {
 }
 
 .credits code {
-    background: var(--light);
+    background: var(--background-secondary);
     padding: 4px 8px;
     border-radius: 6px;
     font-family: monospace;
     font-size: 0.85rem;
+    color: var(--text-primary-color);
 }
 
-/* Responsive */
+/* Animations */
+@keyframes slideIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(-10px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+@keyframes spin {
+    0% { 
+        transform: rotate(0deg); 
+    }
+    100% { 
+        transform: rotate(360deg); 
+    }
+}
+
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+    }
+    to { 
+        opacity: 1; 
+    }
+}
+
+@keyframes themeSwitch {
+    0% { 
+        opacity: 0.9; 
+        transform: scale(0.98); 
+    }
+    100% { 
+        opacity: 1; 
+        transform: scale(1); 
+    }
+}
+
+/* Theme Transition Animation */
+.theme-transitioning * {
+    transition: background-color 0.5s ease, 
+                color 0.5s ease, 
+                border-color 0.5s ease,
+                box-shadow 0.5s ease !important;
+}
+
+[data-theme] .container {
+    animation: themeSwitch 0.3s ease;
+}
+
+/* Dark Theme Specific Styles */
+[data-theme="dark"] .logo i {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+[data-theme="dark"] .logo h1 {
+    background: linear-gradient(135deg, var(--dark-color), var(--primary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Smooth Transitions for All Elements */
+* {
+    transition: background-color 0.5s ease, 
+                color 0.5s ease, 
+                border-color 0.5s ease,
+                box-shadow 0.5s ease;
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+    .forecast-mini {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 20px;
@@ -538,6 +746,61 @@ body {
     }
     
     .api-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .forecast-mini {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .theme-btn span {
+        display: none;
+    }
+    
+    .theme-btn {
+        padding: 10px;
+        width: 45px;
+        height: 45px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .logo h1 {
+        font-size: 1.8rem;
+    }
+    
+    .search-box {
+        flex-direction: column;
+    }
+    
+    .btn-primary, .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .quick-cities {
+        gap: 8px;
+    }
+    
+    .quick-city {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+    }
+    
+    .temp-value {
+        font-size: 3.5rem;
+    }
+    
+    .weather-icon-large {
+        font-size: 3.5rem;
+    }
+    
+    .forecast-mini {
         grid-template-columns: 1fr;
     }
 }

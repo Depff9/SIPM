@@ -1,13 +1,19 @@
 // Weatherbit API Configuration
 const WEATHERBIT_CONFIG = {
-    apiKey: '17209dfbbbe34f0d87d2f6af1ecfdc8c', // Ваш ключ
+    apiKey: '17209dfbbbe34f0d87d2f6af1ecfdc8c',
     baseUrl: 'https://api.weatherbit.io/v2.0',
-    units: 'M', // M = metric (Celsius, m/s)
+    units: 'M',
     lang: 'ru'
 };
 
 // DOM Elements
 const elements = {
+    // Новые элементы для темы
+    themeToggle: document.getElementById('themeToggle'),
+    themeIcon: document.getElementById('themeIcon'),
+    themeText: document.getElementById('themeText'),
+    
+    // Существующие элементы
     cityInput: document.getElementById('cityInput'),
     searchBtn: document.getElementById('searchBtn'),
     locationBtn: document.getElementById('locationBtn'),
@@ -47,39 +53,23 @@ const elements = {
 
 // Weather Icons Mapping
 const WEATHER_ICONS = {
-    // Clear
+    // ... (оставьте без изменений)
     '01d': 'fa-sun',
     '01n': 'fa-moon',
-    
-    // Few clouds
     '02d': 'fa-cloud-sun',
     '02n': 'fa-cloud-moon',
-    
-    // Scattered clouds
     '03d': 'fa-cloud',
     '03n': 'fa-cloud',
-    
-    // Broken clouds
     '04d': 'fa-cloud',
     '04n': 'fa-cloud',
-    
-    // Shower rain
     '09d': 'fa-cloud-showers-heavy',
     '09n': 'fa-cloud-showers-heavy',
-    
-    // Rain
     '10d': 'fa-cloud-sun-rain',
     '10n': 'fa-cloud-moon-rain',
-    
-    // Thunderstorm
     '11d': 'fa-bolt',
     '11n': 'fa-bolt',
-    
-    // Snow
     '13d': 'fa-snowflake',
     '13n': 'fa-snowflake',
-    
-    // Mist
     '50d': 'fa-smog',
     '50n': 'fa-smog'
 };
@@ -94,13 +84,77 @@ const AQI_LEVELS = [
     { min: 301, max: 500, level: 'Опасно', color: '#8e44ad', emoji: '☠️' }
 ];
 
+// Theme Management
+const ThemeManager = {
+    currentTheme: 'light',
+    
+    init() {
+        // Загружаем сохраненную тему из localStorage
+        const savedTheme = localStorage.getItem('weatherTheme') || 'light';
+        this.setTheme(savedTheme);
+        
+        // Назначаем обработчик клика
+        elements.themeToggle.addEventListener('click', () => this.toggleTheme());
+    },
+    
+    setTheme(theme) {
+        this.currentTheme = theme;
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('weatherTheme', theme);
+        
+        // Обновляем иконку и текст кнопки
+        this.updateThemeButton();
+    },
+    
+    toggleTheme() {
+        const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+        this.setTheme(newTheme);
+        
+        // Добавляем анимацию переключения
+        this.addThemeTransition();
+    },
+    
+    updateThemeButton() {
+        if (this.currentTheme === 'dark') {
+            elements.themeIcon.className = 'fas fa-sun';
+            elements.themeText.textContent = 'Светлая тема';
+            elements.themeToggle.title = 'Переключить на светлую тему';
+        } else {
+            elements.themeIcon.className = 'fas fa-moon';
+            elements.themeText.textContent = 'Тёмная тема';
+            elements.themeToggle.title = 'Переключить на тёмную тему';
+        }
+    },
+    
+    addThemeTransition() {
+        // Добавляем класс для плавного перехода
+        document.body.classList.add('theme-transitioning');
+        
+        // Убираем класс после завершения анимации
+        setTimeout(() => {
+            document.body.classList.remove('theme-transitioning');
+        }, 500);
+    },
+    
+    // Метод для проверки системных настроек
+    detectSystemTheme() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark';
+        }
+        return 'light';
+    }
+};
+
 // Initialize App
 document.addEventListener('DOMContentLoaded', function() {
-    // Show API key preview (first 6 and last 5 characters)
+    // Инициализируем менеджер темы
+    ThemeManager.init();
+    
+    // Показываем превью API ключа
     const apiKey = WEATHERBIT_CONFIG.apiKey;
     elements.apiKeyPreview.textContent = `${apiKey.substring(0, 6)}...${apiKey.substring(apiKey.length - 5)}`;
     
-    // Load last searched city or default
+    // Загружаем последний город
     const lastCity = localStorage.getItem('lastCity') || 'Moscow';
     elements.cityInput.value = lastCity;
     getWeather(lastCity);
@@ -121,6 +175,17 @@ document.addEventListener('DOMContentLoaded', function() {
             getWeather(city);
         });
     });
+    
+    // Автоматическое определение темы системы (опционально)
+    // Если пользователь не выбрал тему вручную
+    if (!localStorage.getItem('weatherTheme')) {
+        const systemTheme = ThemeManager.detectSystemTheme();
+        if (systemTheme !== ThemeManager.currentTheme) {
+            setTimeout(() => {
+                ThemeManager.setTheme(systemTheme);
+            }, 1000);
+        }
+    }
 });
 
 // Handle Search
@@ -138,19 +203,14 @@ async function getWeather(city) {
     hideWeatherCard();
     
     try {
-        // Current weather
         const weatherUrl = `${WEATHERBIT_CONFIG.baseUrl}/current?city=${encodeURIComponent(city)}&units=${WEATHERBIT_CONFIG.units}&lang=${WEATHERBIT_CONFIG.lang}&key=${WEATHERBIT_CONFIG.apiKey}`;
-        
-        // Air quality
         const aqiUrl = `${WEATHERBIT_CONFIG.baseUrl}/current/airquality?city=${encodeURIComponent(city)}&key=${WEATHERBIT_CONFIG.apiKey}`;
         
-        // Fetch both requests in parallel
         const [weatherResponse, aqiResponse] = await Promise.allSettled([
             fetch(weatherUrl),
             fetch(aqiUrl)
         ]);
         
-        // Handle weather response
         if (weatherResponse.status === 'rejected') {
             throw new Error('Ошибка сети при запросе погоды');
         }
@@ -162,26 +222,19 @@ async function getWeather(city) {
         
         const weatherData = await weatherResponse.value.json();
         
-        // Check if we have data
         if (!weatherData.data || weatherData.data.length === 0) {
             throw new Error('Город не найден или нет данных о погоде');
         }
         
         const currentWeather = weatherData.data[0];
         
-        // Handle air quality response
         let airQualityData = null;
         if (aqiResponse.status === 'fulfilled' && aqiResponse.value.ok) {
             airQualityData = await aqiResponse.value.json();
         }
         
-        // Update API usage info from headers
         updateApiUsageInfo(weatherResponse.value.headers);
-        
-        // Display weather data
         displayWeather(currentWeather, airQualityData);
-        
-        // Save to localStorage
         localStorage.setItem('lastCity', city);
         
     } catch (error) {
@@ -212,7 +265,6 @@ async function getWeatherByLocation() {
         });
         
         const { latitude, longitude } = position.coords;
-        
         const weatherUrl = `${WEATHERBIT_CONFIG.baseUrl}/current?lat=${latitude}&lon=${longitude}&units=${WEATHERBIT_CONFIG.units}&lang=${WEATHERBIT_CONFIG.lang}&key=${WEATHERBIT_CONFIG.apiKey}`;
         
         const response = await fetch(weatherUrl);
@@ -230,9 +282,7 @@ async function getWeatherByLocation() {
         
         const currentWeather = weatherData.data[0];
         
-        // Update API usage info
         updateApiUsageInfo(response.headers);
-        
         displayWeather(currentWeather);
         elements.cityInput.value = currentWeather.city_name;
         localStorage.setItem('lastCity', currentWeather.city_name);
@@ -252,11 +302,11 @@ async function getWeatherByLocation() {
 
 // Display Weather Data
 function displayWeather(data, airQuality = null) {
-    // City and country
+    // Город и страна
     elements.cityName.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${data.city_name}`;
     elements.countryCode.textContent = data.country_code || '--';
     
-    // Date and time
+    // Дата и время
     const now = new Date();
     const options = {
         weekday: 'long',
@@ -269,11 +319,11 @@ function displayWeather(data, airQuality = null) {
     };
     elements.currentDateTime.textContent = now.toLocaleDateString('ru-RU', options);
     
-    // Temperature and feels like
+    // Температура
     elements.temperature.textContent = Math.round(data.temp);
     elements.feelsLike.textContent = `${Math.round(data.app_temp)}°C`;
     
-    // Other measurements
+    // Другие параметры
     elements.humidity.textContent = `${data.rh}%`;
     elements.windSpeed.textContent = `${data.wind_spd.toFixed(1)} м/с`;
     elements.pressure.textContent = `${Math.round(data.pres)} hPa`;
@@ -282,24 +332,24 @@ function displayWeather(data, airQuality = null) {
     elements.visibility.textContent = `${(data.vis / 1000).toFixed(1)} км`;
     elements.uvIndex.textContent = data.uv ? data.uv.toFixed(1) : '--';
     
-    // Sunrise and sunset
+    // Восход и закат
     if (data.sunrise && data.sunset) {
         elements.sunrise.textContent = formatTime(data.sunrise);
         elements.sunset.textContent = formatTime(data.sunset);
     }
     
-    // Weather description and icon
+    // Описание погоды
     const description = data.weather.description;
     elements.weatherDescription.textContent = description;
     elements.weatherDetails.textContent = `Обновлено: ${formatTime(data.ob_time || now.toISOString())}`;
     
-    // Set weather icon
+    // Иконка погоды
     const iconCode = data.weather.icon;
     const iconClass = WEATHER_ICONS[iconCode] || 'fa-cloud';
     elements.weatherIcon.innerHTML = `<i class="fas ${iconClass}"></i>`;
     elements.descIcon.className = `fas ${iconClass}`;
     
-    // Air quality
+    // Качество воздуха
     if (airQuality && airQuality.data && airQuality.data.length > 0) {
         const aqi = airQuality.data[0].aqi;
         const level = getAQILevel(aqi);
@@ -314,7 +364,6 @@ function displayWeather(data, airQuality = null) {
         elements.airQualitySection.style.display = 'none';
     }
     
-    // Show weather card
     showWeatherCard();
 }
 
@@ -344,7 +393,6 @@ function updateApiUsageInfo(headers) {
         elements.apiStatus.textContent = 'Активен';
         elements.apiStatus.style.color = '#2ecc71';
         
-        // Show warning if low on requests
         if (parseInt(remaining) < 50) {
             showInfo(`Осталось мало запросов: ${remaining}`);
         }
@@ -384,6 +432,5 @@ function hideError() {
 }
 
 function showInfo(message) {
-    // You can implement a temporary info message system here
     console.info(message);
 }
